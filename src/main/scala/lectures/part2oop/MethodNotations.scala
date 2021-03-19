@@ -12,13 +12,14 @@ object MethodNotations extends App {
     def isAlive: Boolean = true
     // apply() with 0 parameters is a special function
     def apply(): String = s"Hi, my name is $name and my movie is $favoriteMovie"
+    // apply() method can take parameters
     def apply(times: Int): String = s"$name watched $favoriteMovie $times times"
 
     def +(title: String) : Person = new Person(s"$name ($title)", favoriteMovie, age)
     def unary_+ : Person = new Person(name, favoriteMovie, age + 1)
 
     def learns(subject: String) = s"$name learns $subject"
-    def learnsScala() = learns("Scala")
+    def learnsScala() = this learns "Scala"
   }
 
   val mary = new Person("Mary","Inception")

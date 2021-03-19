@@ -31,4 +31,13 @@ object Objects extends App {
   println(mary == john)
   val person = new Person("person") // new instance
   val bobby = Person(mary, john)
+
+  // Scala Applications == Scala object with
+  // def main(args: Array[String]): Unit as parameters
+
+  // Java: public static void main(String args[])
+  // Scala: Object def main(args: Array[String])
+
+  // def main(args: Array[String]): Unit
+
 }

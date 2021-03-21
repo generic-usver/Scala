@@ -44,5 +44,12 @@ object GenericListTest extends App {
   val arr4 = arr3 add "11"
   println("Arr = " + arr4)
 
+  val listOfIntegers: MyGenericList[Int] = new EmptyGenericList()
+  val listOfStrings: MyGenericList[String] = new EmptyGenericList()
+
+  println("Adding int to empty: " + listOfIntegers.add(5))
+  println("Adding String to empty: " + listOfIntegers.add("333"))
+
+
 }
 

@@ -13,9 +13,12 @@ abstract class MyGenericList[+A] {
   def map[B](transformer: MyTransformer[A,B]): MyGenericList[B]
   // Mapping to B. Transformer A to MyList[B] => MyList[B]
   // Look-ahead required here
-  //def flatMap[B](transformer: MyTransformer[A,MyGenericList[B]]): MyGenericList[B]
   // Taking A list and returning similar A list.
   def filter(predicate: MyPredicate[A]): MyGenericList[A]
+
+  //concatenation
+  def ++[B >: A](list: MyGenericList[B]): MyGenericList[B]
+  def flatMap[B](transformer: MyTransformer[A,MyGenericList[B]]): MyGenericList[B]
 }
 
 /*
@@ -49,8 +52,9 @@ object EmptyGenericList extends MyGenericList[Nothing] {
    */
   // Turning myList of A into MyList of B
   override def map[B](transformer: MyTransformer[Nothing, B]): MyGenericList[B] = EmptyGenericList
-  //override def flatMap[B](transformer: MyTransformer[Nothing, MyGenericList[B]]): MyGenericList[B] = EmptyGenericList
+  override def flatMap[B](transformer: MyTransformer[Nothing, MyGenericList[B]]): MyGenericList[B] = EmptyGenericList
   override def filter(predicate: MyPredicate[Nothing]): MyGenericList[Nothing] = EmptyGenericList
+  override def ++[Nothing](list: MyGenericList[Nothing]): MyGenericList[Nothing] = list
 }
 
 class MyArrayGenericList[+A](val headElement: A, list: MyGenericList[A]) extends MyGenericList[A] {
@@ -80,6 +84,17 @@ class MyArrayGenericList[+A](val headElement: A, list: MyGenericList[A]) extends
 
   override protected def printElements: String = {
     s"$head $tail"
+  }
+
+  override def ++[B >: A](appendableList: MyGenericList[B]): MyGenericList[B] = {
+    new MyArrayGenericList(headElement, tail ++ appendableList)
+  }
+
+  /*
+    List [1,2,3].flatMap(n, n+1) = 1,2
+   */
+  override def flatMap[B](transformer: MyTransformer[A, MyGenericList[B]]): MyGenericList[B] = {
+    transformer.transform(headElement) ++ tail.flatMap(transformer)
   }
 }
 
@@ -118,5 +133,20 @@ object GenericListTest extends App {
   println("Will map them *= 2 and get output")
   println(listOfIntegers.map((element: Int) => element * 2))
   println("filtered even: " + listOfIntegers.filter((t: Int) => (t % 2 == 0)))
+
+
+  println("Will concatenate " + listOfIntegers + " with " +listOfIntegers)
+  println("result: " + (listOfIntegers ++ listOfIntegers))
+
+  println("result: " + (listOfIntegers ++ listOfIntegers))
+
+  println(s"flatMap from $listOfIntegers :: " + listOfIntegers.flatMap(new MyTransformer[Int, MyGenericList[Int]] {
+    override def transform(element: Int): MyGenericList[Int] =
+      new MyArrayGenericList(element, new MyArrayGenericList(element + 1, EmptyGenericList))
+  }
+
+  ))
+
+
 }
 

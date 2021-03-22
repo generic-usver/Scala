@@ -38,7 +38,7 @@ class EvenPredicate extends MyPredicate[Int] {
   override def test(t: Int): Boolean = t % 2 == 0
 }
 
-object EmptyGenericList extends MyGenericList[Nothing] {
+case object EmptyGenericList extends MyGenericList[Nothing] {
   override def head: Nothing = throw new NoSuchElementException
   override def tail: Nothing = throw new NoSuchElementException
   override def isEmpty: Boolean = true
@@ -57,7 +57,7 @@ object EmptyGenericList extends MyGenericList[Nothing] {
   override def ++[Nothing](list: MyGenericList[Nothing]): MyGenericList[Nothing] = list
 }
 
-class MyArrayGenericList[+A](val headElement: A, list: MyGenericList[A]) extends MyGenericList[A] {
+case class MyArrayGenericList[+A](val headElement: A, list: MyGenericList[A]) extends MyGenericList[A] {
   override def head: A = headElement
   override def tail: MyGenericList[A] = list
   override def isEmpty: Boolean = false
@@ -142,7 +142,7 @@ object GenericListTest extends App {
 
   println(s"flatMap from $listOfIntegers :: " + listOfIntegers.flatMap(new MyTransformer[Int, MyGenericList[Int]] {
     override def transform(element: Int): MyGenericList[Int] =
-      new MyArrayGenericList(element, new MyArrayGenericList(element + 1, EmptyGenericList))
+      MyArrayGenericList(element, new MyArrayGenericList(element + 1, EmptyGenericList))
   }
 
   ))

@@ -4,8 +4,8 @@ package lectures.part2oop
 import lectures.part1basics.DefaultArgs
 
 // curly brace imports for grouped imports
-import com.usver.playground.{Cinderella => Princess, PrinceCharming}
-import com.usver.playground._ // wildcard!
+import playground.{Cinderella => Princess, PrinceCharming}
+import playground._ // wildcard!
 //import com.usver.playground.* // Java wildcards don't work :/
 
 import java.util.Date
@@ -20,7 +20,7 @@ object PackagingAndImports extends App {
   DefaultArgs.fact10
 
   // you can also use the fully qualified name (FQDN)
-  com.usver.playground.ScalaPlayground.executionStart
+  playground.ScalaPlayground.executionStart
 
   // ======================================
   // Scala-specific things: PACKAGE OBJECT

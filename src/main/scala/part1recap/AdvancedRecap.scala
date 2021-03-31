@@ -42,5 +42,15 @@ object AdvancedRecap extends App {
   partialFunctionChain(5)   // 999 from the original
   partialFunctionChain(60)  // 9000 from "orElse" add-on
   //partialFunctionChain(456) // thows matchError
-  
+
+  // TYPE ALIASES
+  type ReceiveFunction = PartialFunction[Any, Unit]
+
+  // define a function declaring a well-known method signature
+  def receive: ReceiveFunction = {
+    // Getting integers as inputs
+    case 1 => println("Hello")      // println() returning *Unit* back
+    case 2 => println("confused")   // println() also returning *Unit*
+  }
+
 }

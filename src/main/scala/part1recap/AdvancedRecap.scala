@@ -53,4 +53,17 @@ object AdvancedRecap extends App {
     case 2 => println("confused")   // println() also returning *Unit*
   }
 
+  //////////////////////////////
+  def optionalToInt(in: String): Option[Int] = {
+    try {
+      Some(in.trim.toInt)       // Some == something inside
+    } catch {
+      case e: Exception => None // None == nothing inside
+    }
+  }
+
+  optionalToInt("asdf") match {
+    case Some(i) => println(s"Found Integer: $i")
+    case None => println("input wasn't valid")
+  }
 }

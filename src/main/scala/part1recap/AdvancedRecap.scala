@@ -1,6 +1,8 @@
 package com.usver
 package part1recap
 
+import scala.concurrent.Future
+
 object AdvancedRecap extends App {
 
   // partial functions are functions that operate only on part of the given domain
@@ -66,4 +68,43 @@ object AdvancedRecap extends App {
     case Some(i) => println(s"Found Integer: $i")
     case None => println("input wasn't valid")
   }
+
+  // IMPLICITS
+  //
+  implicit val timeout = 3000
+
+  def setTimeout(f: () => Unit)(implicit timeout: Int) = {
+    println("setting timeout: " + timeout)
+    f()
+  }
+  setTimeout(() => println("setting a timeout")) // extra parameter]
+
+  // IMPLICIT is a way to "kinda guess" the nearest "implicit" value to be used
+
+  case class Person(name: String) {
+    def greet = s"Hi, my name is $name!"
+  }
+
+  implicit def fromStringToPerson(name: String): Person = Person(name)
+  println("Peter".greet) // this is automatically done by compiler
+
+  implicit class Dog(name: String) {
+    def bark = println(s"bark [$name]")
+  }
+  "Lassie".bark
+
+  implicit val inverseOrdering: Ordering[Int] = Ordering.fromLessThan(_ > _)
+  List(1,2,3).sorted.foreach(println _) // sorted takes implicit Ordering param
+
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val future = Future {
+    println("Hello from future")
+  }
+
+  /*
+      Ordering in which implicit values are taken:
+        1) Local scope
+        2) Imported scope
+        3) Companion objects
+   */
 }

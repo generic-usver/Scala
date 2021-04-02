@@ -25,18 +25,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
   "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
 
-
-  /*"com.typesafe.akka" %% "akka-actor" % akkaVersion,
-  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-  "com.typesafe.akka" %% "akka-stream-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion,
-  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
-  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
-  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,*/
-
-  //"com.typesafe.akka" %% "akka-testkit" % "2.5.3",
-  //"com.typesafe.akka" %% "akka-http" % "10.2.4",
-  //"com.typesafe.akka" %% "akka-stream" % "2.5.23",
+  "ch.qos.logback" % "logback-classic" % "1.1.3" % Runtime,
 
 )

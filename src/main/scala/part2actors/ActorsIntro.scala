@@ -50,7 +50,17 @@ object ActorsIntro extends App {
   }
   // Now .. how do we instantiate this? ^^
 
+  // Legal, but not the best way
   val person = actorSystem.actorOf(Props(new ActorPerson("Bob")))
   person ! "hi"
+
+  // "Best practice" - a better way to instantiate subclass of Actor
+  // Make a companion object of this
+  object ActorPerson {
+    def props(name: String) = Props(new ActorPerson(name))
+  }
+
+  val johnPerson = actorSystem.actorOf(ActorPerson.props("John"))
+  johnPerson ! "hi"
 }
 

@@ -37,6 +37,14 @@ object ActorCapabilities extends App {
   val alice = actorSystem.actorOf(Props[SimpleActor], "alice")
   val bob = actorSystem.actorOf(Props[SimpleActor], "bob")
   alice ! SayHiTo(bob) // pass Actor reference as a parameter
+
+  // let's send a message with no Actor back reference
+  alice ! "Hi!" // 4. Causes deadLetters as [sending Actor == null] @handling this type+reading context.sender
+
+  // 5) Forwarding messages
+  // D -> A -> B // forwarding == silent phones where we just pass message keeping the initial sender
+  // This message type will be handled that way
+  alice ! MessageWithTheOriginalSender("Well, let's just forward it", bob)
 }
 
 class SimpleActor extends Actor {
@@ -53,9 +61,12 @@ class SimpleActor extends Actor {
       self ! contents // we redirect the String as new message
     case SayHiTo(actorRef: ActorRef) =>
       actorRef ! "Hi!" // we pass message + OURSELVES (this) as the 2nd parameter, so we can be referenced later
+    case MessageWithTheOriginalSender(contents, sender) =>
+      sender forward contents + "!!" // forward == KEEP original SENDER
   }
 }
 case class SayHiTo(reference: ActorRef)
+case class MessageWithTheOriginalSender(contents: String, reference: ActorRef)
 
 case class SpecialMessage(contents: String)
 case class SendMessageToYourself(contents: String)

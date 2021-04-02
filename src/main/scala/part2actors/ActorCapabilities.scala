@@ -1,7 +1,7 @@
 package com.usver
 package part2actors
 
-import akka.actor.{Actor, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.event.Logging
 
 object ActorCapabilities extends App {
@@ -30,25 +30,31 @@ object ActorCapabilities extends App {
       actor.self.path == akka:// protocol address
      2) We can use that context.self to send messages to ourselves (as Actor)
       // context.self == this == self
-     3)
    */
+
+  // 3 - Actors can REPLY to messages
+
+  val alice = actorSystem.actorOf(Props[SimpleActor], "alice")
+  val bob = actorSystem.actorOf(Props[SimpleActor], "bob")
+  alice ! SayHiTo(bob) // pass Actor reference as a parameter
 }
 
 class SimpleActor extends Actor {
   val log = Logging(context.system, this)
   override def receive: Receive = {
-    case message: String => println(s"[simple actor] received message:'$message'")
-    case int: Int => println(s"[simple actor] INT value arrived: $int")
+    case message: String => println(s"[${self.path.name}] received message:'$message'")
+    case int: Int => println(s"[${self.path.name}] INT value arrived: $int")
     // one way to handle whole object
     //case specialMessage: SpecialMessage =>
     // alternative way to handle only the essential parts
-    case SpecialMessage(contents) => println(s"[simple actor] Got special message: '$contents'")
+    case SpecialMessage(contents) => println(s"[${self.path.name}] Got special message: '$contents'")
     case SendMessageToYourself(contents) =>
       self ! contents // we redirect the String as new message
+    case SayHiTo(actorRef: ActorRef) =>
+      actorRef ! "Hi!"
   }
 }
-
-
+case class SayHiTo(reference: ActorRef)
 
 case class SpecialMessage(contents: String)
 case class SendMessageToYourself(contents: String)

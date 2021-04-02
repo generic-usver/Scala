@@ -14,6 +14,24 @@ object ActorCapabilities extends App {
   simpleActor ! "something"
   simpleActor ! 5
   simpleActor ! SpecialMessage("tada")
+
+  // send to myself
+  simpleActor ! SendMessageToYourself("message to myself")
+
+  /*
+    Messages can be any type AS LONG AS:
+     1) They are IMMUTABLE
+     2) They are SERIALIZABLE (Usually: case Classes or case Objects)
+   */
+
+  /*
+    Actors know the environment they are in
+     1) ActorClass -> context.self == "this" very actor
+      actor.self.path == akka:// protocol address
+     2) We can use that context.self to send messages to ourselves (as Actor)
+      // context.self == this == self
+     3)
+   */
 }
 
 class SimpleActor extends Actor {
@@ -25,9 +43,12 @@ class SimpleActor extends Actor {
     //case specialMessage: SpecialMessage =>
     // alternative way to handle only the essential parts
     case SpecialMessage(contents) => println(s"[simple actor] Got special message: '$contents'")
+    case SendMessageToYourself(contents) =>
+      self ! contents // we redirect the String as new message
   }
 }
 
 
 
 case class SpecialMessage(contents: String)
+case class SendMessageToYourself(contents: String)

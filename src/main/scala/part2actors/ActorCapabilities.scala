@@ -42,6 +42,7 @@ object ActorCapabilities extends App {
 class SimpleActor extends Actor {
   val log = Logging(context.system, this)
   override def receive: Receive = {
+    case "Hi!" => context.sender ! "Hello there!" // using context.sender() to reference sender
     case message: String => println(s"[${self.path.name}] received message:'$message'")
     case int: Int => println(s"[${self.path.name}] INT value arrived: $int")
     // one way to handle whole object
@@ -51,7 +52,7 @@ class SimpleActor extends Actor {
     case SendMessageToYourself(contents) =>
       self ! contents // we redirect the String as new message
     case SayHiTo(actorRef: ActorRef) =>
-      actorRef ! "Hi!"
+      actorRef ! "Hi!" // we pass message + OURSELVES (this) as the 2nd parameter, so we can be referenced later
   }
 }
 case class SayHiTo(reference: ActorRef)

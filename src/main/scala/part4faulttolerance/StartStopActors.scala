@@ -17,7 +17,8 @@ object StartStopActors extends App {
   parentActor ! StartChild("child2")
   val child2 = actorSystem.actorSelection("/user/parent/child2")
 
-  parentActor ! StopParent
+  //parentActor ! StopParent
+  parentActor ! PoisonPill
   for (i <- 1 to 100) parentActor ! s"$i Parent, Are you still there?"
 
   //child2 ! "Some test message! - should be OK"

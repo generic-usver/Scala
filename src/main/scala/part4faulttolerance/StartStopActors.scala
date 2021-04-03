@@ -1,7 +1,7 @@
 package com.usver
 package part4faulttolerance
 
-import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Kill, PoisonPill, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Kill, PoisonPill, Props, Terminated}
 import Parent._
 
 object StartStopActors extends App {
@@ -32,6 +32,15 @@ object StartStopActors extends App {
   for (i <- 1 to 1) abruptlyTerminatedChild ! s"$i Are you still there?"
   println("After checking ..")
 
+  // Deatch watch
+
+  val watcher = actorSystem.actorOf(Props[Watcher], "watcher")
+  watcher ! StartChild("watchable")
+  val watchable = actorSystem.actorSelection("/user/watcher/watchable")
+  //println("watchable name; " + watchable.path.name)
+  Thread.sleep(500)
+  watchable ! "Something"
+  watchable ! PoisonPill
 }
 
 object Parent {
@@ -39,6 +48,21 @@ object Parent {
   case class StartChild(name: String)
   case class StopChild(name: String)
   case object StopParent // parent stopping itself
+}
+
+class Watcher extends Actor with ActorLogging {
+  import Parent._
+  override def receive: Receive = {
+    case StartChild(name) => {
+      val child = context.actorOf(Props[Child], name) // creating a legit child
+      log.info("Started and watching child")
+      // This ensures this Actor will be notified when that child will be stopped
+      // Kinda watch after that kid
+      context.watch(child)
+    }
+    case Terminated(killedActorReference) =>
+      log.warning(s"Actor ${killedActorReference.path.name} I watched has been stopped")
+  }
 }
 
 class Parent extends Actor with ActorLogging {
@@ -93,7 +117,7 @@ class Child extends Actor with ActorLogging {
   override def postStop(): Unit = super.postStop(); log.warning(s"  >> Stopping a child: ${self.path.name} <-- why is this happening??")
 
   override def receive: Receive = {
-    case message => log.info(s"[${self.path.name} receives: $message")
+    case message => log.info(s"[${self.path.name}] receives: $message")
   }
 }
 

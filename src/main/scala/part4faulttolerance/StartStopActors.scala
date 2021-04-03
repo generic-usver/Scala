@@ -1,7 +1,7 @@
 package com.usver
 package part4faulttolerance
 
-import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, PoisonPill, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Kill, PoisonPill, Props}
 import Parent._
 
 object StartStopActors extends App {
@@ -25,6 +25,13 @@ object StartStopActors extends App {
   //parentActor ! StopChild("child2")
   for (i <- 1 to 100) child2 ! s"$i Child2, Are you still there?"
   // stopping all children
+
+  val abruptlyTerminatedChild = actorSystem.actorOf(Props[Child])
+  abruptlyTerminatedChild ! " Will get terminated "
+  abruptlyTerminatedChild ! Kill
+  for (i <- 1 to 1) abruptlyTerminatedChild ! s"$i Are you still there?"
+  println("After checking ..")
+
 }
 
 object Parent {
